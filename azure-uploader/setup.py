@@ -10,11 +10,17 @@ from pathlib import Path
 readme_file = Path(__file__).parent / "README.md"
 long_description = readme_file.read_text(encoding="utf-8") if readme_file.exists() else ""
 
-# Read requirements
-requirements_file = Path(__file__).parent / "requirements.txt"
+# Read requirements from parent directory
+requirements_file = Path(__file__).parent.parent / "requirements.txt"
 requirements = []
 if requirements_file.exists():
-    requirements = requirements_file.read_text().strip().split('\n')
+    # Filter to only include the dependencies needed for azure-uploader
+    all_requirements = requirements_file.read_text().strip().split('\n')
+    # Include only non-comment, non-empty lines that are actual dependencies
+    requirements = [
+        line.strip() for line in all_requirements
+        if line.strip() and not line.strip().startswith('#')
+    ]
 
 setup(
     name="azure-uploader",

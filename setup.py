@@ -13,12 +13,11 @@ with open("requirements.txt", "r", encoding="utf-8") as fh:
 setup(
     name="parquet-file-generator",
     version="1.0.0",
-    author="Your Name",
-    author_email="your.email@example.com",
+    author="markcurtis1970",
     description="A configurable system for generating multiple parquet files with custom schemas",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/yourusername/parquet-file-generator",
+    url="https://github.com/markcurtis1970/WD40-parquet",
     packages=find_packages(),
     classifiers=[
         "Development Status :: 4 - Beta",

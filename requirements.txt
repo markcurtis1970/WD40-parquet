@@ -7,12 +7,17 @@ pyyaml>=6.0
 # For advanced data generation
 faker>=19.0.0
 
-# Optional: For enhanced CLI experience (not used in current implementation)
-# click>=8.0.0
-# rich>=13.0.0
+# Azure uploader dependencies
+azure-storage-blob>=12.19.0
+python-dotenv>=1.0.0
+tqdm>=4.66.0
 
-# Development dependencies (optional)
+# CLI dependencies (now used by azure-uploader)
+click>=8.1.0
+
+# Development and testing dependencies
 pytest>=7.0.0
 pytest-cov>=4.0.0
+pytest-mock>=3.10.0
 black>=23.0.0
 flake8>=6.0.0

@@ -24,7 +24,7 @@ cd WD40-azure
 
 2. Install dependencies:
 ```bash
-pip install -r requirements.txt
+pip install -r ../requirements.txt
 ```
 
 3. Set up your Azure configuration by copying the example environment file:
@@ -250,7 +250,7 @@ The project includes comprehensive tests for both the CLI and core uploader func
 
 1. **Install test dependencies**:
 ```bash
-pip install -r requirements.txt
+pip install -r ../requirements.txt
 ```
 
 2. **Run all tests**:
