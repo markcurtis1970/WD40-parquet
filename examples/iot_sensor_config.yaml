@@ -85,9 +85,7 @@ schema:
       type: "int32"
       nullable: true
       generator:
-        type: "normal"
-        mean: -70
-        std: 10
+        type: "uniform_int"
         min: -100
         max: -30
         null_probability: 0.01

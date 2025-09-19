@@ -45,9 +45,7 @@ schema:
       type: "int64"
       nullable: false
       generator:
-        type: "normal"
-        mean: 1000
-        std: 500
+        type: "uniform_int"
         min: 100
         max: 10000
         
