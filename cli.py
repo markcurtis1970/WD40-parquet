@@ -151,7 +151,8 @@ def show_file_info(file_path: str) -> bool:
         
         # Sample data
         print(f"\n=== Sample Data (first 5 rows) ===")
-        df = pd.read_parquet(file_path, nrows=5)
+        nrows = 5
+        df = pd.read_parquet(file_path, engine='pyarrow').head(nrows)
         print(df.to_string(index=False))
         
         return True
