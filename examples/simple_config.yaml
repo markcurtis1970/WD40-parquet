@@ -1,0 +1,50 @@
+# Simple configuration for basic parquet file generation
+# This is a minimal example to get started quickly
+
+global:
+  output_directory: "./output"
+  file_prefix: "simple_data"
+  random_seed: 123
+
+schema:
+  columns:
+    - name: "id"
+      type: "int64"
+      nullable: false
+      generator:
+        type: "sequence"
+        start: 1
+        
+    - name: "name"
+      type: "string"
+      nullable: false
+      generator:
+        type: "choice"
+        choices: ["Alice", "Bob", "Charlie", "Diana", "Eve", "Frank"]
+        
+    - name: "age"
+      type: "int32"
+      nullable: false
+      generator:
+        type: "uniform_int"
+        min: 18
+        max: 80
+        
+    - name: "salary"
+      type: "float64"
+      nullable: true
+      generator:
+        type: "normal"
+        mean: 75000.0
+        std: 15000.0
+        min: 30000.0
+        max: 200000.0
+        null_probability: 0.05
+
+parquet_options:
+  compression: "snappy"
+  row_group_size: 10000
+
+files:
+  count: 3
+  rows_per_file: 50000

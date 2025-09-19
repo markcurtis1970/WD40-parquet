@@ -1,0 +1,146 @@
+# Financial Trading Data Configuration
+# Simulates stock trading and market data
+
+global:
+  output_directory: "./output/financial"
+  file_prefix: "trading_data"
+  random_seed: 101112
+
+schema:
+  columns:
+    - name: "trade_id"
+      type: "int64"
+      nullable: false
+      generator:
+        type: "sequence"
+        start: 1000000
+        
+    - name: "symbol"
+      type: "string"
+      nullable: false
+      generator:
+        type: "choice"
+        choices: ["AAPL", "GOOGL", "MSFT", "AMZN", "TSLA", "META", "NVDA", "NFLX", "AMD", "INTC"]
+        weights: [0.15, 0.12, 0.12, 0.10, 0.10, 0.08, 0.08, 0.08, 0.08, 0.09]
+        
+    - name: "trade_timestamp"
+      type: "timestamp"
+      nullable: false
+      generator:
+        type: "datetime_range"
+        start: "2024-01-01"
+        end: "2024-12-31"
+        
+    - name: "price"
+      type: "float64"
+      nullable: false
+      generator:
+        type: "normal"
+        mean: 150.00
+        std: 50.00
+        min: 10.00
+        max: 500.00
+        
+    - name: "volume"
+      type: "int64"
+      nullable: false
+      generator:
+        type: "normal"
+        mean: 1000
+        std: 500
+        min: 100
+        max: 10000
+        
+    - name: "side"
+      type: "string"
+      nullable: false
+      generator:
+        type: "choice"
+        choices: ["BUY", "SELL"]
+        weights: [0.52, 0.48]  # Slightly more buys than sells
+        
+    - name: "order_type"
+      type: "string"
+      nullable: false
+      generator:
+        type: "choice"
+        choices: ["MARKET", "LIMIT", "STOP", "STOP_LIMIT"]
+        weights: [0.6, 0.25, 0.1, 0.05]
+        
+    - name: "trader_id"
+      type: "string"
+      nullable: false
+      generator:
+        type: "choice"
+        choices: ["TRADER_001", "TRADER_002", "TRADER_003", "TRADER_004", "TRADER_005",
+                 "ALGO_001", "ALGO_002", "ALGO_003", "INST_001", "INST_002"]
+        weights: [0.1, 0.1, 0.1, 0.1, 0.1, 0.15, 0.15, 0.1, 0.05, 0.05]
+        
+    - name: "commission"
+      type: "float64"
+      nullable: false
+      generator:
+        type: "normal"
+        mean: 5.00
+        std: 2.00
+        min: 0.50
+        max: 25.00
+        
+    - name: "market_cap_category"
+      type: "string"
+      nullable: false
+      generator:
+        type: "choice"
+        choices: ["LARGE_CAP", "MID_CAP", "SMALL_CAP"]
+        weights: [0.7, 0.2, 0.1]
+        
+    - name: "sector"
+      type: "string"
+      nullable: false
+      generator:
+        type: "choice"
+        choices: ["Technology", "Healthcare", "Financial", "Consumer", "Industrial", "Energy"]
+        weights: [0.3, 0.15, 0.15, 0.15, 0.15, 0.1]
+        
+    - name: "volatility_score"
+      type: "float32"
+      nullable: true
+      generator:
+        type: "normal"
+        mean: 0.25
+        std: 0.1
+        min: 0.05
+        max: 1.0
+        null_probability: 0.1
+
+parquet_options:
+  compression: "snappy"
+  row_group_size: 75000
+  use_dictionary: true
+  write_statistics: true
+
+files:
+  count: 20
+  rows_per_file: 500000
+  size_variation: 0.15
+
+# Different file configurations for different market sessions
+file_configs:
+  - file_suffix: "_premarket"
+    count: 5
+    rows_per_file: 100000
+    parquet_options:
+      compression: "gzip"
+      
+  - file_suffix: "_afterhours"
+    count: 5
+    rows_per_file: 150000
+    parquet_options:
+      compression: "lz4"
+      
+  - file_suffix: "_high_frequency"
+    count: 3
+    rows_per_file: 1000000
+    parquet_options:
+      compression: "snappy"
+      row_group_size: 200000

@@ -1,0 +1,119 @@
+# IoT Sensor Data Configuration
+# Simulates time-series data from various sensors
+
+global:
+  output_directory: "./output/iot_sensors"
+  file_prefix: "sensor_data"
+  random_seed: 789
+
+schema:
+  columns:
+    - name: "sensor_id"
+      type: "string"
+      nullable: false
+      generator:
+        type: "choice"
+        choices: ["TEMP_001", "TEMP_002", "TEMP_003", "HUM_001", "HUM_002", 
+                 "PRESS_001", "PRESS_002", "LIGHT_001", "MOTION_001", "MOTION_002"]
+        
+    - name: "timestamp"
+      type: "timestamp"
+      nullable: false
+      generator:
+        type: "datetime_range"
+        start: "2024-01-01"
+        end: "2024-01-31"
+        
+    - name: "temperature_celsius"
+      type: "float32"
+      nullable: true
+      generator:
+        type: "normal"
+        mean: 22.5
+        std: 5.0
+        min: -10.0
+        max: 50.0
+        null_probability: 0.02  # Occasional sensor failures
+        
+    - name: "humidity_percent"
+      type: "float32"
+      nullable: true
+      generator:
+        type: "normal"
+        mean: 45.0
+        std: 15.0
+        min: 0.0
+        max: 100.0
+        null_probability: 0.02
+        
+    - name: "pressure_hpa"
+      type: "float32"
+      nullable: true
+      generator:
+        type: "normal"
+        mean: 1013.25
+        std: 20.0
+        min: 950.0
+        max: 1050.0
+        null_probability: 0.02
+        
+    - name: "light_lux"
+      type: "int32"
+      nullable: true
+      generator:
+        type: "uniform_int"
+        min: 0
+        max: 10000
+        null_probability: 0.02
+        
+    - name: "motion_detected"
+      type: "boolean"
+      nullable: false
+      generator:
+        type: "boolean"
+        probability: 0.15  # Motion detected 15% of the time
+        
+    - name: "battery_level_percent"
+      type: "int32"
+      nullable: false
+      generator:
+        type: "uniform_int"
+        min: 10
+        max: 100
+        
+    - name: "signal_strength_dbm"
+      type: "int32"
+      nullable: true
+      generator:
+        type: "normal"
+        mean: -70
+        std: 10
+        min: -100
+        max: -30
+        null_probability: 0.01
+
+parquet_options:
+  compression: "lz4"  # Good for time-series data
+  row_group_size: 100000
+  use_dictionary: true
+  write_statistics: true
+
+files:
+  count: 24  # One file per hour for a day
+  rows_per_file: 36000  # 10 sensors * 3600 seconds = readings per hour
+  size_variation: 0.05  # Small variation for consistent sensor data
+
+# Different configurations for different sensor types
+file_configs:
+  - file_suffix: "_temperature_only"
+    count: 5
+    rows_per_file: 50000
+    parquet_options:
+      compression: "snappy"
+      
+  - file_suffix: "_motion_events"
+    count: 3
+    rows_per_file: 25000
+    parquet_options:
+      compression: "gzip"
+      row_group_size: 25000

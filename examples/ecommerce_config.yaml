@@ -1,0 +1,107 @@
+# E-commerce transaction data configuration
+# Simulates online store transaction records
+
+global:
+  output_directory: "./output/ecommerce"
+  file_prefix: "transactions"
+  random_seed: 456
+
+schema:
+  columns:
+    - name: "transaction_id"
+      type: "string"
+      nullable: false
+      generator:
+        type: "uuid"
+        
+    - name: "customer_id"
+      type: "int64"
+      nullable: false
+      generator:
+        type: "uniform_int"
+        min: 1000
+        max: 50000
+        
+    - name: "product_category"
+      type: "string"
+      nullable: false
+      generator:
+        type: "choice"
+        choices: ["Electronics", "Clothing", "Books", "Home & Garden", "Sports", "Beauty"]
+        weights: [0.25, 0.20, 0.15, 0.15, 0.15, 0.10]
+        
+    - name: "product_price"
+      type: "float64"
+      nullable: false
+      generator:
+        type: "normal"
+        mean: 45.99
+        std: 25.00
+        min: 5.00
+        max: 500.00
+        
+    - name: "quantity"
+      type: "int32"
+      nullable: false
+      generator:
+        type: "choice"
+        choices: [1, 2, 3, 4, 5]
+        weights: [0.6, 0.2, 0.1, 0.05, 0.05]
+        
+    - name: "discount_applied"
+      type: "boolean"
+      nullable: false
+      generator:
+        type: "boolean"
+        probability: 0.3
+        
+    - name: "payment_method"
+      type: "string"
+      nullable: false
+      generator:
+        type: "choice"
+        choices: ["Credit Card", "Debit Card", "PayPal", "Apple Pay", "Google Pay"]
+        weights: [0.4, 0.25, 0.2, 0.1, 0.05]
+        
+    - name: "transaction_timestamp"
+      type: "timestamp"
+      nullable: false
+      generator:
+        type: "datetime_range"
+        start: "2024-01-01"
+        end: "2024-12-31"
+        
+    - name: "customer_rating"
+      type: "int32"
+      nullable: true
+      generator:
+        type: "choice"
+        choices: [1, 2, 3, 4, 5]
+        weights: [0.05, 0.1, 0.15, 0.35, 0.35]
+        null_probability: 0.4  # Many transactions don't have ratings yet
+
+parquet_options:
+  compression: "snappy"
+  row_group_size: 50000
+  use_dictionary: true
+  write_statistics: true
+
+files:
+  count: 10
+  rows_per_file: 100000
+  size_variation: 0.2  # 20% variation in file sizes
+
+# Generate different file types for different time periods
+file_configs:
+  - file_suffix: "_q1"
+    count: 3
+    rows_per_file: 75000
+    parquet_options:
+      compression: "gzip"
+      
+  - file_suffix: "_q2_large"
+    count: 2
+    rows_per_file: 250000
+    parquet_options:
+      compression: "lz4"
+      row_group_size: 100000

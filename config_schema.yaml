@@ -1,0 +1,95 @@
+# Example configuration file for Parquet file generation
+# This demonstrates all available options and their usage
+
+# Global settings for the generation process
+global:
+  output_directory: "./output"
+  file_prefix: "data"
+  random_seed: 42  # For reproducible data generation
+  
+# Define the schema for the parquet files
+schema:
+  columns:
+    - name: "id"
+      type: "int64"
+      nullable: false
+      generator:
+        type: "sequence"
+        start: 1
+        
+    - name: "user_id"
+      type: "string"
+      nullable: false
+      generator:
+        type: "uuid"
+        
+    - name: "timestamp"
+      type: "timestamp"
+      nullable: false
+      generator:
+        type: "datetime_range"
+        start: "2023-01-01"
+        end: "2024-12-31"
+        
+    - name: "amount"
+      type: "float64"
+      nullable: true
+      generator:
+        type: "normal"
+        mean: 100.0
+        std: 25.0
+        min: 0.0
+        max: 1000.0
+        
+    - name: "category"
+      type: "string"
+      nullable: true
+      generator:
+        type: "choice"
+        choices: ["A", "B", "C", "D"]
+        weights: [0.4, 0.3, 0.2, 0.1]
+        
+    - name: "is_active"
+      type: "boolean"
+      nullable: false
+      generator:
+        type: "boolean"
+        probability: 0.8
+        
+    - name: "score"
+      type: "int32"
+      nullable: true
+      generator:
+        type: "uniform_int"
+        min: 1
+        max: 100
+
+# Parquet file specific parameters
+parquet_options:
+  compression: "snappy"  # Options: snappy, gzip, lz4, brotli, none
+  row_group_size: 50000
+  page_size: 8192
+  use_dictionary: true
+  write_statistics: true
+  
+# File generation settings
+files:
+  count: 5  # Number of files to generate
+  rows_per_file: 100000  # Number of rows in each file
+  size_variation: 0.1  # Random variation in file sizes (0.0 to 1.0)
+  
+# Optional: Different file configurations
+# You can specify different settings for different files
+file_configs:
+  - file_suffix: "_small"
+    count: 3
+    rows_per_file: 10000
+    parquet_options:
+      compression: "gzip"
+      
+  - file_suffix: "_large" 
+    count: 2
+    rows_per_file: 500000
+    parquet_options:
+      compression: "snappy"
+      row_group_size: 100000
